@@ -106,9 +106,52 @@ O campo "correta" é o índice (0 a 3) da alternativa certa dentro do array.`
   return JSON.parse(conteudo);
 }
 
-// versão temporária só pra testar - depois substituímos pela de verdade
 function exibirResultado(resumo, perguntas) {
-  console.log("RESUMO:", resumo);
-  console.log("PERGUNTAS:", perguntas);
-  resultado.innerHTML = `<div class="resumo-box"><p>Testando... veja o console (F12)</p></div>`;
+  // monta o bloco do resumo
+  let html = `
+    <div class="resumo-box">
+      <h2>Resumo</h2>
+      <p>${resumo}</p>
+    </div>
+  `;
+
+  // monta cada card de pergunta
+  perguntas.forEach((item, indice) => {
+    html += `
+      <div class="pergunta-card" data-indice="${indice}">
+        <p>${indice + 1}. ${item.pergunta}</p>
+        ${item.alternativas.map((alt, i) => `
+          <button class="alternativa" data-correta="${item.correta}" data-selecionada="${i}">
+            ${alt}
+          </button>
+        `).join("")}
+      </div>
+    `;
+  });
+
+  resultado.innerHTML = html;
+
+  // depois de montar o HTML, adiciona o comportamento de clique em cada alternativa
+  document.querySelectorAll(".alternativa").forEach(botao => {
+    botao.addEventListener("click", verificarResposta);
+  });
+}
+
+function verificarResposta(evento) {
+  const botaoClicado = evento.target;
+  const card = botaoClicado.closest(".pergunta-card");
+  const correta = parseInt(botaoClicado.dataset.correta);
+  const selecionada = parseInt(botaoClicado.dataset.selecionada);
+
+  // desabilita todos os botões dessa pergunta pra não deixar clicar de novo
+  const todosBotoes = card.querySelectorAll(".alternativa");
+  todosBotoes.forEach(btn => btn.disabled = true);
+
+  if (selecionada === correta) {
+    botaoClicado.classList.add("correta");
+  } else {
+    botaoClicado.classList.add("incorreta");
+    // mostra qual era a certa, já que o usuário errou
+    todosBotoes[correta].classList.add("correta");
+  }
 }
