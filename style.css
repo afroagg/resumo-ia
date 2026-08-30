@@ -141,6 +141,8 @@ button:disabled {
 
 .alternativa:hover {
   border-color: #1b6b6b;
+  background-color: #e8f0ef;
+  color: #144f4f;
 }
 
 .alternativa.correta {
@@ -170,4 +172,22 @@ button:disabled {
   padding: 16px;
   border-radius: 2px;
   margin-top: 20px;
+}
+
+.placar {
+  text-align: center;
+  font-weight: 700;
+  color: #1b6b6b;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.explicacao {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background-color: #f7f5f0;
+  border-left: 3px solid #1b6b6b;
+  font-size: 0.85rem;
+  color: #3a3946;
+  font-style: italic;
 }

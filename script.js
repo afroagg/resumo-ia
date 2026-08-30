@@ -2,6 +2,8 @@
 const textoInput = document.getElementById("textoInput");
 const btnGerar = document.getElementById("btnGerar");
 const resultado = document.getElementById("resultado");
+let acertos = 0;
+let totalRespondidas = 0;
 
 // clique no botão dispara o processo todo
 btnGerar.addEventListener("click", gerarResumoEQuiz);
@@ -78,12 +80,13 @@ async function gerarQuiz(resumo) {
       messages: [
         {
           role: "system",
-          content: `Crie exatamente 3 perguntas de múltipla escolha sobre o texto a seguir, cada uma com 4 alternativas (apenas uma correta). Responda SOMENTE em formato JSON válido, sem nenhum texto antes ou depois, seguindo essa estrutura:
+          content: `Crie exatamente 3 perguntas de múltipla escolha sobre o texto a seguir, cada uma com 4 alternativas (apenas uma correta) e uma breve explicação da resposta certa. Responda SOMENTE em formato JSON válido, sem nenhum texto antes ou depois, seguindo essa estrutura:
 [
   {
     "pergunta": "texto da pergunta",
     "alternativas": ["alt 1", "alt 2", "alt 3", "alt 4"],
-    "correta": 0
+    "correta": 0,
+    "explicacao": "breve explicação de por que essa é a resposta certa"
   }
 ]
 O campo "correta" é o índice (0 a 3) da alternativa certa dentro do array.`
@@ -107,7 +110,9 @@ O campo "correta" é o índice (0 a 3) da alternativa certa dentro do array.`
 }
 
 function exibirResultado(resumo, perguntas) {
-  // monta o bloco do resumo
+  acertos = 0;
+  totalRespondidas = 0;
+
   let html = `
     <div class="resumo-box">
       <h2>Resumo</h2>
@@ -115,7 +120,6 @@ function exibirResultado(resumo, perguntas) {
     </div>
   `;
 
-  // monta cada card de pergunta
   perguntas.forEach((item, indice) => {
     html += `
       <div class="pergunta-card" data-indice="${indice}">
@@ -125,13 +129,15 @@ function exibirResultado(resumo, perguntas) {
             ${alt}
           </button>
         `).join("")}
+        <p class="explicacao" style="display: none;">${item.explicacao}</p>
       </div>
     `;
   });
 
+  html += `<div class="placar" id="placar">Acertos: 0 de ${perguntas.length}</div>`;
+
   resultado.innerHTML = html;
 
-  // depois de montar o HTML, adiciona o comportamento de clique em cada alternativa
   document.querySelectorAll(".alternativa").forEach(botao => {
     botao.addEventListener("click", verificarResposta);
   });
@@ -143,15 +149,21 @@ function verificarResposta(evento) {
   const correta = parseInt(botaoClicado.dataset.correta);
   const selecionada = parseInt(botaoClicado.dataset.selecionada);
 
-  // desabilita todos os botões dessa pergunta pra não deixar clicar de novo
   const todosBotoes = card.querySelectorAll(".alternativa");
   todosBotoes.forEach(btn => btn.disabled = true);
 
+  totalRespondidas++;
+
   if (selecionada === correta) {
     botaoClicado.classList.add("correta");
+    acertos++;
   } else {
     botaoClicado.classList.add("incorreta");
-    // mostra qual era a certa, já que o usuário errou
     todosBotoes[correta].classList.add("correta");
+
+    const explicacao = card.querySelector(".explicacao");
+    explicacao.style.display = "block";
   }
+
+  document.getElementById("placar").textContent = `Acertos: ${acertos} de ${totalRespondidas}`;
 }
