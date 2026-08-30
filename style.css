@@ -191,3 +191,35 @@ button:disabled {
   color: #3a3946;
   font-style: italic;
 }
+
+.navegacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.navegacao button {
+  margin-top: 0;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  background-color: #ffffff;
+  color: #1b6b6b;
+  border: 1px solid #1b6b6b;
+}
+
+.navegacao button:hover {
+  background-color: #e8f0ef;
+}
+
+.contador-conjunto {
+  font-size: 0.85rem;
+  color: #6b6874;
+}
+
+#btnMaisPerguntas {
+  display: block;
+  margin: 20px auto 0;
+}
